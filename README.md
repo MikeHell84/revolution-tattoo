@@ -18,7 +18,7 @@ Soporte Multilingüe (Español/Inglés): La página incluye un botón para cambi
 
 Animaciones de Scroll: Las secciones aparecen suavemente a medida que el usuario se desplaza por la página, mejorando la fluidez de la navegación.
 
-🚀 Tecnologías Utilizadas
+Tecnologías Utilizadas
 Este proyecto fue construido utilizando tecnologías web estándar para garantizar su rendimiento y compatibilidad.
 
 HTML5: Para la estructura semántica del contenido.
