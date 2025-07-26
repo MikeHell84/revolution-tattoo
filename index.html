@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revolution Tattoo Studio - Rionegro</title>
+    
+    <link rel="icon" type="image/png" href="Images/favicon.png">
+     
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;700&family=Metamorphous&display=swap" rel="stylesheet">
+    <style>
+        /* --- Paleta de Colores y Configuración de Temas --- */
+        :root {
+            /* Dark Theme (Principal por defecto) */
+            --bg-color-dark: #1a1a1a;
+            --text-color-dark: #F4E7DB;
+            --card-bg-color-dark: rgba(35, 35, 35, 0.6);
+            --card-border-color-dark: rgba(60, 60, 60, 0.8);
+            --header-bg-color-dark: rgba(26, 26, 26, 0.5);
+            --header-border-color-dark: rgba(60, 60, 60, 0.5);
+            --modal-bg-color-dark: #2d2d2d;
+
+            /* Light Theme (Paleta de alto contraste mejorada) */
+            --bg-color-light: #FFFFFF;
+            --text-color-light: #1F2937;
+            --card-bg-color-light: #F9FAFB;
+            --card-border-color-light: #E5E7EB;
+            --header-bg-color-light: rgba(255, 255, 255, 0.7);
+            --header-border-color-light: #E5E7EB;
+            --modal-bg-color-light: #FFFFFF;
+            
+            /* Accent Color - Universal */
+            --accent-color: #D92323;
+
+            /* Asignación inicial (Dark Mode por defecto) */
+            --bg-color: var(--bg-color-dark);
+            --text-color: var(--text-color-dark);
+            --card-bg-color: var(--card-bg-color-dark);
+            --card-border-color: var(--card-border-color-dark);
+            --header-bg-color: var(--header-bg-color-dark);
+            --header-border-color: var(--header-border-color-dark);
+            --modal-bg-color: var(--modal-bg-color-dark);
+        }
+
+        html.light-theme {
+            --bg-color: var(--bg-color-light);
+            --text-color: var(--text-color-light);
+            --card-bg-color: var(--card-bg-color-light);
+            --card-border-color: var(--card-border-color-light);
+            --header-bg-color: var(--header-bg-color-light);
+            --header-border-color: var(--header-border-color-light);
+            --modal-bg-color: var(--modal-bg-color-light);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .font-anton { font-family: 'Anton', sans-serif; text-transform: uppercase; }
+        .font-logo { font-family: 'Metamorphous', serif; }
+        .accent-color { color: var(--accent-color); }
+        .bg-accent { background-color: var(--accent-color); }
+        .border-accent { border-color: var(--accent-color); }
+
+        .nav-link { position: relative; transition: color 0.3s; }
+        .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 50%; transform: translateX(-50%); background-color: var(--accent-color); transition: width 0.3s ease-in-out; }
+        .nav-link:hover { color: var(--accent-color); }
+        .nav-link:hover::after { width: 100%; }
+        
+        .masonry-grid { column-count: 2; column-gap: 1rem; }
+        @media (min-width: 768px) { .masonry-grid { column-count: 3; } }
+        .gallery-item { display: inline-block; width: 100%; margin-bottom: 1rem; break-inside: avoid; position: relative; overflow: hidden; border-radius: 0.5rem; cursor: pointer; }
+        .gallery-item img { width: 100%; height: auto; display: block; transition: transform 0.4s ease; }
+        .gallery-item:hover img { transform: scale(1.05); }
+        .gallery-item .overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.6); opacity: 0; transition: opacity 0.4s ease; display: flex; align-items: center; justify-content: center; }
+        .gallery-item:hover .overlay { opacity: 1; }
+        .gallery-item .overlay-icon { color: white; width: 40px; height: 40px; opacity: 0; transform: scale(0.8); transition: opacity 0.3s ease, transform 0.3s ease; }
+        .gallery-item:hover .overlay-icon { opacity: 1; transform: scale(1); }
+
+        .scroll-reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .scroll-reveal.visible { opacity: 1; transform: translateY(0); }
+
+        .themed-header { background-color: var(--header-bg-color); border-color: var(--header-border-color); }
+        .themed-card { background-color: var(--card-bg-color); border-color: var(--card-border-color); }
+        .themed-footer { background-color: var(--bg-color-dark); border-color: var(--card-border-color-dark); }
+        .social-icon:hover { color: var(--accent-color); }
+
+        /* --- ESTILOS PARA GALERÍA PARALLAX --- */
+        .parallax-slide {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .parallax-slide.active {
+            opacity: 1;
+        }
+
+        /* --- ESTILOS PARA LA VENTANA MODAL --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal-container { background-color: var(--modal-bg-color); color: var(--text-color); padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
+        .modal-overlay.visible .modal-container { transform: scale(1); }
+        .modal-close-btn { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); opacity: 0.7; transition: opacity 0.2s ease; z-index: 1020; }
+        .modal-close-btn:hover { opacity: 1; }
+        .process-card { cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .process-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05); }
+
+        /* --- ESTILOS PARA EL LIGHTBOX DE LA GALERÍA --- */
+        #gallery-lightbox { background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); }
+        #lightbox-content { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+        #lightbox-img { max-width: 90vw; max-height: 80vh; object-fit: contain; border-radius: 0.25rem; box-shadow: 0 0 40px rgba(0,0,0,0.5); }
+        #lightbox-caption { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: white; background-color: rgba(0,0,0,0.5); padding: 0.5rem 1rem; border-radius: 0.25rem; font-size: 0.9rem; text-align: center; }
+        .lightbox-nav { position: absolute; top: 50%; transform: translateY(-50%); background-color: rgba(0,0,0,0.3); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 2rem; cursor: pointer; transition: background-color 0.2s ease; display: flex; align-items: center; justify-content: center; }
+        .lightbox-nav:hover { background-color: rgba(0,0,0,0.6); }
+        #lightbox-prev { left: 20px; }
+        #lightbox-next { right: 20px; }
+        #lightbox-close { top: 20px; right: 20px; color: white; font-size: 2.5rem; background: none; border: none; cursor: pointer; z-index: 1020; }
+    </style>
+</head>
+<body>
+
+    <!-- Header y Navegación -->
+    <header class="themed-header backdrop-blur-sm sticky top-0 z-50 border-b">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#inicio" class="flex items-center gap-2 text-xl font-bold tracking-wider">
+                <img src="Images\logoTattoo.png" alt="Logo de Revolution Tattoo" class="h-12 w-auto">
+                <span class="font-logo text-2xl">REVOLUTION <span class="accent-color">TATTOO</span></span>
+            </a>
+            <div class="flex items-center">
+                <div class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="#nosotros" class="nav-link" data-key="nav_studio">El Estudio</a>
+                    <a href="#proceso" class="nav-link" data-key="nav_process">Proceso</a>
+                    <a href="#galeria" class="nav-link" data-key="nav_gallery">Galería</a>
+                    <a href="#contacto" class="nav-link" data-key="nav_contact">Contacto</a>
+                </div>
+                <button id="lang-toggle" class="ml-4 p-2 font-bold text-sm">ES</button>
+                <button id="theme-toggle" class="ml-2 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-accent-color" style="background-color: transparent;">
+                    <svg id="theme-toggle-dark-icon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                    <svg id="theme-toggle-light-icon" class="h-5 w-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 5.05A1 1 0 003.636 6.464l.707.707a1 1 0 001.414-1.414l-.707-.707zM3 11a1 1 0 100-2H2a1 1 0 100 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                </button>
+                <button id="mobile-menu-button" class="md:hidden ml-4 p-2 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden bg-black/20 backdrop-blur-lg">
+             <a href="#nosotros" class="block py-3 px-6 text-center nav-link" data-key="nav_studio_mobile">El Estudio</a>
+            <a href="#proceso" class="block py-3 px-6 text-center nav-link" data-key="nav_process_mobile">Proceso</a>
+            <a href="#galeria" class="block py-3 px-6 text-center nav-link" data-key="nav_gallery_mobile">Galería</a>
+            <a href="#contacto" class="block py-3 px-6 text-center nav-link" data-key="nav_contact_mobile">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Sección de Inicio (Hero) con Galería Parallax -->
+    <section id="inicio" class="relative h-screen flex items-center justify-center text-center px-6">
+        <div id="parallax-gallery" class="absolute top-0 left-0 w-full h-full z-[-2]">
+            <!-- Las imágenes se insertarán aquí con JS -->
+        </div>
+        <div class="absolute inset-0 bg-black/60" style="z-index: -1;"></div>
+        <div class="relative z-10 text-white">
+            <h1 class="font-anton text-5xl md:text-7xl leading-tight tracking-wide" data-key="hero_title">
+                Diseño & Tatuaje <br> <span class="accent-color">Colaboración Creativa</span>
+            </h1>
+            <p class="mt-6 text-gray-200 max-w-lg mx-auto" data-key="hero_subtitle">
+                Un estudio de arte en Rionegro donde tus ideas se transforman en piezas únicas. Creamos contigo, con pasión por el diseño y la máxima calidad.
+            </p>
+            <a href="#proceso" class="mt-8 inline-block bg-accent text-white font-bold py-3 px-8 rounded-full hover:bg-red-700 transition-colors" data-key="hero_button">
+                Conoce Nuestro Proceso
+            </a>
+        </div>
+    </section>
+
+    <main class="container mx-auto px-6 py-20 space-y-28">
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="scroll-reveal grid md:grid-cols-2 gap-16 items-center">
+            <div class="flex justify-center">
+                <img src="Images/foto_artistas.jpg" alt="Foto de los artistas Lina y Faber" class="rounded-lg shadow-lg object-cover w-full max-w-sm opacity-90">
+            </div>
+            <div class="text-center md:text-left">
+                <h2 class="font-anton text-4xl tracking-wider mb-4" data-key="about_title">Un Estudio, Dos Artistas</h2>
+                <p class="mb-4" data-key="about_p1">
+                    Somos Lina y Faber. Revolution no es solo un local, es nuestro estudio creativo. Desde 2012, nos hemos dedicado a perfeccionar el arte del tatuaje como una forma de expresión personal y colaboración artística.
+                </p>
+                <p class="font-medium border-l-4 border-accent pl-4" data-key="about_p2">
+                    Nuestra filosofía se basa en la confianza, la higiene de grado médico y una dedicación obsesiva por el detalle. Cada pieza es un proyecto de arte que construimos contigo.
+                </p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN PROCESO CREATIVO (Interactiva) -->
+        <section id="proceso" class="scroll-reveal text-center">
+            <h2 class="font-anton text-4xl tracking-wider mb-12" data-key="process_title">Nuestro Proceso Creativo</h2>
+            <div class="grid md:grid-cols-4 gap-8 max-w-6xl mx-auto">
+                <div class="themed-card process-card p-6 rounded-lg border text-center shadow-sm" data-step="1"><div class="font-anton text-3xl accent-color mb-2">01</div><h3 class="text-xl font-bold mb-2" data-key="process1_title">Consulta & Idea</h3><p class="text-sm opacity-80" data-key="process1_desc">Todo empieza con tu visión. Agendamos una charla para explorar tus ideas, referencias y expectativas.</p></div>
+                <div class="themed-card process-card p-6 rounded-lg border text-center shadow-sm" data-step="2"><div class="font-anton text-3xl accent-color mb-2">02</div><h3 class="text-xl font-bold mb-2" data-key="process2_title">Diseño y Creación</h3><p class="text-sm opacity-80" data-key="process2_desc">Transformamos la idea en un diseño digital único. Te lo presentamos para revisiones.</p></div>
+                <div class="themed-card process-card p-6 rounded-lg border text-center shadow-sm" data-step="3"><div class="font-anton text-3xl accent-color mb-2">03</div><h3 class="text-xl font-bold mb-2" data-key="process3_title">Sesión & Arte</h3><p class="text-sm opacity-80" data-key="process3_desc">El día de la cita, trabajamos en un ambiente estéril y cómodo para plasmar el arte en tu piel.</p></div>
+                <div class="themed-card process-card p-6 rounded-lg border text-center shadow-sm" data-step="4"><div class="font-anton text-3xl accent-color mb-2">04</div><h3 class="text-xl font-bold mb-2" data-key="process4_title">Cuidado & Curación</h3><p class="text-sm opacity-80" data-key="process4_desc">Te damos todas las indicaciones para una curación perfecta. El resultado final depende del cuidado.</p></div>
+            </div>
+        </section>
+
+        <!-- Sección Galería (Interactiva) -->
+        <section id="galeria" class="scroll-reveal">
+            <h2 class="font-anton text-4xl tracking-wider text-center mb-12" data-key="gallery_title">Galería de Proyectos</h2>
+            <div class="masonry-grid">
+                <div class="gallery-item"><img src="Images/tattoo01.jpg" alt="Tatuaje de león en blanco y negro en un antebrazo" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+                <div class="gallery-item"><img src="Images/tattoo02.jpg" alt="Tatuaje de zorro a color en estilo neotradicional" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+                <div class="gallery-item"><img src="Images/tattoo03.jpg" alt="Manga de tatuaje con patrones geométricos" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+                <div class="gallery-item"><img src="Images/tattoo04.jpg" alt="Tatuaje de pez koi en estilo japonés en una espalda" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+                <div class="gallery-item"><img src="Images/tattoo05.jpg" alt="Tatuaje de flores en línea fina en un hombro" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+                <div class="gallery-item"><img src="Images/tattoo06.jpg" alt="Tatuaje de una calavera con flores" loading="lazy"><div class="overlay"><svg class="overlay-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15m-6 0L3.75 20.25m16.5-16.5L9 9" /></svg></div></div>
+            </div>
+             <!-- Botón para ver más proyectos -->
+             <div class="text-center mt-12">
+                <a href="gallery.html" class="inline-block bg-transparent border-2 border-accent text-accent font-bold py-3 px-8 rounded-full hover:bg-accent hover:text-white transition-colors" data-key="gallery_button">
+                    Ver más proyectos
+                </a>
+            </div>
+        </section>
+
+        <!-- Sección Contacto -->
+        <section id="contacto" class="scroll-reveal text-center themed-card p-8 md:p-16 rounded-lg border">
+            <h2 class="font-anton text-4xl tracking-wider mb-4" data-key="contact_title">¿Listo para empezar tu proyecto?</h2>
+            <p class="max-w-2xl mx-auto mb-8 opacity-80" data-key="contact_p1">
+                Escríbenos para agendar una consulta de diseño o para resolver cualquier duda. Estamos aquí para ayudarte a dar vida a tu próxima pieza de arte.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-4">
+                 <a href="https://wa.me/573148173312" target="_blank" class="bg-accent text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors w-full md:w-auto" data-key="contact_button1">
+                    Iniciar Proyecto con Lina
+                </a>
+                 <a href="https://wa.me/573148885870" target="_blank" class="bg-accent text-white font-bold py-3 px-6 rounded-full hover:bg-red-700 transition-colors w-full md:w-auto" data-key="contact_button2">
+                    Iniciar Proyecto con Faber
+                </a>
+            </div>
+            <a href="https://www.google.com/maps/place/6%C2%B009'06.4%22N+75%C2%B022'25.3%22W/@6.1518055,-75.3736643,3a,75y,224.74h,91.97t/data=!3m7!1e1!3m5!1srj0nVddDXyH5WwWLYDgSbQ!2e0!6shttps:%2F%2Fstreetviewpixels-pa.googleapis.com%2Fv1%2Fthumbnail%3Fcb_client%3Dmaps_sv.tactile%26w%3D900%26h%3D600%26pitch%3D-1.9715185298319255%26panoid%3Drj0nVddDXyH5WwWLYDgSbQ%26yaw%3D224.73609071887708!7i16384!8i8192!4m4!3m3!8m2!3d6.151767!4d-75.373695?entry=ttu&g_ep=EgoyMDI1MDcyMi4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener noreferrer" class="opacity-60 mt-8 text-sm inline-block hover:opacity-100 transition-opacity" data-key="contact_location">
+                📍 Rionegro, Antioquia, Colombia
+            </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="themed-footer border-t border-white/10 py-6">
+        <div class="container mx-auto px-6 text-center text-gray-400">
+            <div class="flex justify-center gap-6 mb-4">
+                 <!-- Icono de Facebook 1 -->
+                <a href="https://www.facebook.com/revolutiontatuajes/" target="_blank" aria-label="Facebook Revolution Tatuajes" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                </a>
+                <!-- Icono de Facebook 2 -->
+                <a href="https://www.facebook.com/Revolutiontat" target="_blank" aria-label="Facebook Revolution Tat" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
+                </a>
+                <!-- Icono de X (Twitter) -->
+                <a href="https://x.com/highrevolutiont" target="_blank" aria-label="Perfil de X" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                </a>
+                <!-- Icono de Instagram 1 -->
+                <a href="https://www.instagram.com/Olaf_tatuador" target="_blank" aria-label="Instagram de Olaf Tatuador" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                </a>
+                <!-- Icono de Instagram 2 -->
+                <a href="https://www.instagram.com/tatuajes_revolution_rionegro" target="_blank" aria-label="Instagram de Revolution Rionegro" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                </a>
+                <!-- Icono de Instagram 3 -->
+                <a href="https://www.instagram.com/linapenagos/" target="_blank" aria-label="Instagram de Lina Penagos" class="social-icon transition-transform hover:scale-110">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                </a>
+            </div>
+            <p class="text-sm">&copy; <span id="year"></span> Revolution Tattoo Studio. Todos los derechos reservados. <br> Desarrollado por XLERION STUDIOS - COLOMBIA.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DEL PROCESO -->
+    <div id="process-modal" class="modal-overlay"><div class="modal-container"><button id="modal-close" class="modal-close-btn">&times;</button><h2 id="modal-title" class="font-anton text-3xl accent-color mb-4"></h2><p id="modal-description" class="mb-6 opacity-90"></p><div id="modal-images" class="grid grid-cols-3 gap-4"></div></div></div>
+
+    <!-- NUEVO: LIGHTBOX DE LA GALERÍA -->
+    <div id="gallery-lightbox" class="modal-overlay">
+        <div id="lightbox-content">
+            <button id="lightbox-close" class="modal-close-btn">&times;</button>
+            <button id="lightbox-prev" class="lightbox-nav">&#10094;</button>
+            <img id="lightbox-img" src="" alt="Imagen de la galería ampliada">
+            <div id="lightbox-caption"></div>
+            <button id="lightbox-next" class="lightbox-nav">&#10095;</button>
+        </div>
+    </div>
+
+    <script id="translations">
+        const translations = {
+            "nav_studio": { "es": "El Estudio", "en": "The Studio" },
+            "nav_process": { "es": "Proceso", "en": "Process" },
+            "nav_gallery": { "es": "Galería", "en": "Gallery" },
+            "nav_contact": { "es": "Contacto", "en": "Contact" },
+            "nav_studio_mobile": { "es": "El Estudio", "en": "The Studio" },
+            "nav_process_mobile": { "es": "Proceso", "en": "Process" },
+            "nav_gallery_mobile": { "es": "Galería", "en": "Gallery" },
+            "nav_contact_mobile": { "es": "Contacto", "en": "Contact" },
+            "hero_title": { "es": "Diseño & Tatuaje <br> <span class='accent-color'>Colaboración Creativa</span>", "en": "Design & Tattoo <br> <span class='accent-color'>Creative Collaboration</span>" },
+            "hero_subtitle": { "es": "Un estudio de arte en Rionegro donde tus ideas se transforman en piezas únicas. Creamos contigo, con pasión por el diseño y la máxima calidad.", "en": "An art studio in Rionegro where your ideas are transformed into unique pieces. We create with you, with a passion for design and the highest quality." },
+            "hero_button": { "es": "Conoce Nuestro Proceso", "en": "Learn Our Process" },
+            "about_title": { "es": "Un Estudio, Dos Artistas", "en": "One Studio, Two Artists" },
+            "about_p1": { "es": "Somos Lina y Faber. Revolution no es solo un local, es nuestro estudio creativo. Desde 2012, nos hemos dedicado a perfeccionar el arte del tatuaje como una forma de expresión personal y colaboración artística.", "en": "We are Lina and Faber. Revolution is not just a shop, it's our creative studio. Since 2012, we have dedicated ourselves to perfecting the art of tattooing as a form of personal expression and artistic collaboration." },
+            "about_p2": { "es": "Nuestra filosofía se basa en la confianza, la higiene de grado médico y una dedicación obsesiva por el detalle. Cada pieza es un proyecto de arte que construimos contigo.", "en": "Our philosophy is based on trust, medical-grade hygiene, and an obsessive dedication to detail. Each piece is an art project we build with you." },
+            "process_title": { "es": "Nuestro Proceso Creativo", "en": "Our Creative Process" },
+            "process1_title": { "es": "Consulta & Idea", "en": "Consultation & Idea" },
+            "process1_desc": { "es": "Todo empieza con tu visión. Agendamos una charla para explorar tus ideas, referencias y expectativas.", "en": "It all starts with your vision. We schedule a chat to explore your ideas, references, and expectations." },
+            "process2_title": { "es": "Diseño y Creación", "en": "Design and Creation" },
+            "process2_desc": { "es": "Transformamos la idea en un diseño digital único. Te lo presentamos para revisiones.", "en": "We transform the idea into a unique digital design. We present it to you for revisions." },
+            "process3_title": { "es": "Sesión & Arte", "en": "Session & Art" },
+            "process3_desc": { "es": "El día de la cita, trabajamos en un ambiente estéril y cómodo para plasmar el arte en tu piel.", "en": "On the day of the appointment, we work in a sterile and comfortable environment to bring the art to your skin." },
+            "process4_title": { "es": "Cuidado & Curación", "en": "Aftercare & Healing" },
+            "process4_desc": { "es": "Te damos todas las indicaciones para una curación perfecta. El resultado final depende del cuidado.", "en": "We give you all the instructions for perfect healing. The final result depends on good aftercare." },
+            "gallery_title": { "es": "Galería de Proyectos", "en": "Project Gallery" },
+            "gallery_button": { "es": "Ver más proyectos", "en": "View more projects" },
+            "contact_title": { "es": "¿Listo para empezar tu proyecto?", "en": "Ready to start your project?" },
+            "contact_p1": { "es": "Escríbenos para agendar una consulta de diseño o para resolver cualquier duda. Estamos aquí para ayudarte a dar vida a tu próxima pieza de arte.", "en": "Write to us to schedule a design consultation or to resolve any questions. We are here to help you bring your next piece of art to life." },
+            "contact_button1": { "es": "Iniciar Proyecto con Lina", "en": "Start Project with Lina" },
+            "contact_button2": { "es": "Iniciar Proyecto con Faber", "en": "Start Project with Faber" },
+            "contact_location": { "es": "📍 Rionegro, Antioquia, Colombia", "en": "📍 Rionegro, Antioquia, Colombia" }
+        };
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Lógica del Tema ---
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            
+            const applyTheme = (isLight) => {
+                document.documentElement.classList.toggle('light-theme', isLight);
+                themeToggleDarkIcon.classList.toggle('hidden', !isLight);
+                themeToggleLightIcon.classList.toggle('hidden', isLight);
+            };
+
+            const isLightTheme = localStorage.getItem('color-theme') === 'light';
+            applyTheme(isLightTheme);
+
+            themeToggleBtn.addEventListener('click', () => {
+                const isLight = document.documentElement.classList.toggle('light-theme');
+                localStorage.setItem('color-theme', isLight ? 'light' : 'dark');
+                applyTheme(isLight);
+            });
+
+            // --- Lógica del Menú Móvil ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            mobileMenu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => mobileMenu.classList.add('hidden')));
+
+            // --- Animación de Scroll ---
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.scroll-reveal').forEach(section => observer.observe(section));
+            
+            // --- Año dinámico en Footer ---
+            document.getElementById('year').textContent = new Date().getFullYear();
+
+            // --- LÓGICA DE LA GALERÍA PARALLAX ---
+            const parallaxImages = [
+                'Images/background01.jpg', 
+                'Images/background02.jpg',
+                'Images/background03.jpg',
+                'Images/background04.jpg',
+                'Images/background05.jpg'
+            ];
+            const galleryContainer = document.getElementById('parallax-gallery');
+            let currentImageIndex = 0;
+
+            parallaxImages.forEach(src => { new Image().src = src; });
+
+            parallaxImages.forEach((src, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'parallax-slide';
+                slide.style.backgroundImage = `url('${src}')`;
+                if (index === 0) slide.classList.add('active');
+                galleryContainer.appendChild(slide);
+            });
+
+            const slides = document.querySelectorAll('.parallax-slide');
+            setInterval(() => {
+                slides[currentImageIndex].classList.remove('active');
+                currentImageIndex = (currentImageIndex + 1) % parallaxImages.length;
+                slides[currentImageIndex].classList.add('active');
+            }, 5000);
+
+            // --- LÓGICA DE LA VENTANA MODAL DEL PROCESO ---
+            const processModal = document.getElementById('process-modal');
+            if (processModal) {
+                const modalTitle = document.getElementById('modal-title');
+                const modalDescription = document.getElementById('modal-description');
+                const modalImages = document.getElementById('modal-images');
+                const processCards = document.querySelectorAll('.process-card');
+                const processData = {
+                    1: { title: "Consulta & Idea", description: "Este es el primer paso y el más importante...", images: ['Images/ideas01.jpg', 'Images/ideas02.jpg', 'Images/ideas03.jpg'] },
+                    2: { title: "Diseño y Creación", description: "Con la idea clara, comienza la magia...", images: ['Images/creacion01.jpg', 'Images/creacion02.jpg', 'Images/creacion03.jpg'] },
+                    3: { title: "Sesión & Arte", description: "¡El gran día! Nuestro estudio cumple con los más altos estándares...", images: ['Images/sesion01.jpg', 'Images/sesion02.jpg', 'Images/sesion03.jpg'] },
+                    4: { title: "Cuidado & Curación", description: "Un tatuaje increíble merece un cuidado increíble...", images: ['Images/curaduria.jpg', 'Images/curaduria2.jpg', 'Images/curaduria3.jpg'] }
+                };
+                const openModal = (step) => {
+                    const data = processData[step];
+                    if (!data) return;
+                    modalTitle.textContent = data.title;
+                    modalDescription.textContent = data.description;
+                    modalImages.innerHTML = data.images.map(src => `<img src="${src}" alt="Imagen para ${data.title}" class="w-full h-auto object-cover rounded-md shadow-md" loading="lazy">`).join('');
+                    processModal.classList.add('visible');
+                    document.body.style.overflow = 'hidden';
+                };
+                const closeModal = () => {
+                    processModal.classList.remove('visible');
+                    document.body.style.overflow = '';
+                };
+                processCards.forEach(card => card.addEventListener('click', () => openModal(card.dataset.step)));
+                document.getElementById('modal-close').addEventListener('click', closeModal);
+                processModal.addEventListener('click', (e) => { if (e.target === processModal) closeModal(); });
+                document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && processModal.classList.contains('visible')) closeModal(); });
+            }
+
+            // --- LÓGICA DEL LIGHTBOX DE LA GALERÍA ---
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            const lightbox = document.getElementById('gallery-lightbox');
+            if (lightbox && galleryItems.length > 0) {
+                const lightboxImg = document.getElementById('lightbox-img');
+                const lightboxCaption = document.getElementById('lightbox-caption');
+                const lightboxClose = document.getElementById('lightbox-close');
+                const lightboxPrev = document.getElementById('lightbox-prev');
+                const lightboxNext = document.getElementById('lightbox-next');
+                
+                const galleryData = Array.from(galleryItems).map(item => ({
+                    src: item.querySelector('img').src,
+                    alt: item.querySelector('img').alt
+                }));
+
+                let currentIndex = 0;
+
+                const showImage = (index) => {
+                    const item = galleryData[index];
+                    lightboxImg.src = item.src;
+                    lightboxImg.alt = item.alt;
+                    lightboxCaption.textContent = item.alt;
+                    currentIndex = index;
+                };
+
+                const openLightbox = (index) => {
+                    showImage(index);
+                    lightbox.classList.add('visible');
+                    document.body.style.overflow = 'hidden';
+                };
+
+                const closeLightbox = () => {
+                    lightbox.classList.remove('visible');
+                    document.body.style.overflow = '';
+                };
+                
+                const showPrevImage = () => showImage((currentIndex - 1 + galleryData.length) % galleryData.length);
+                const showNextImage = () => showImage((currentIndex + 1) % galleryData.length);
+
+                galleryItems.forEach((item, index) => {
+                    item.addEventListener('click', () => openLightbox(index));
+                });
+
+                lightboxClose.addEventListener('click', closeLightbox);
+                lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+                lightboxPrev.addEventListener('click', showPrevImage);
+                lightboxNext.addEventListener('click', showNextImage);
+                document.addEventListener('keydown', (e) => {
+                    if (lightbox.classList.contains('visible')) {
+                        if (e.key === 'Escape') closeLightbox();
+                        if (e.key === 'ArrowLeft') showPrevImage();
+                        if (e.key === 'ArrowRight') showNextImage();
+                    }
+                });
+            }
+
+            // --- LÓGICA DE IDIOMAS ---
+            const langToggleBtn = document.getElementById('lang-toggle');
+            let currentLang = localStorage.getItem('language') || 'es';
+
+            const setLanguage = (lang) => {
+                const elements = document.querySelectorAll('[data-key]');
+                elements.forEach(element => {
+                    const key = element.getAttribute('data-key');
+                    if (translations[key] && translations[key][lang]) {
+                        element.innerHTML = translations[key][lang];
+                    }
+                });
+                document.documentElement.lang = lang;
+                langToggleBtn.textContent = lang.toUpperCase();
+                localStorage.setItem('language', lang);
+            };
+
+            langToggleBtn.addEventListener('click', () => {
+                currentLang = currentLang === 'es' ? 'en' : 'es';
+                setLanguage(currentLang);
+            });
+
+            // Set initial language on load
+            setLanguage(currentLang);
+        });
+    </script>
+</body>
+</html>
