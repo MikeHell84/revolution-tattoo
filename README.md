@@ -1,7 +1,7 @@
 Revolution Tattoo Studio - Página Web Oficial
 Este repositorio contiene el código fuente de la página web oficial de Revolution Tattoo Studio, un estudio de tatuajes ubicado en Rionegro, Antioquia, Colombia. El sitio está diseñado para ser una landing page moderna, interactiva y totalmente adaptable a dispositivos móviles.
 
-✨ Características Principales
+Características Principales
 La página web cuenta con una serie de características interactivas para mejorar la experiencia del usuario:
 
 Diseño Totalmente Adaptable (Responsive): Se visualiza perfectamente en cualquier dispositivo, desde teléfonos móviles hasta computadores de escritorio.
@@ -29,7 +29,7 @@ JavaScript (Vanilla): Para toda la interactividad, incluyendo el cambio de tema,
 
 Google Fonts: Para la importación de las tipografías personalizadas (Anton, Inter y Metamorphous).
 
-📂 Estructura de Archivos
+Estructura de Archivos
 El proyecto está organizado de la siguiente manera para facilitar su mantenimiento:
 
 /
@@ -40,12 +40,12 @@ El proyecto está organizado de la siguiente manera para facilitar su mantenimie
 │   └── ... (etc.)
 └── index.html            # Archivo principal que contiene toda la estructura, estilos y scripts.
 
-🌐 Ver el Sitio en Vivo
+Ver el Sitio en Vivo
 Este proyecto está desplegado usando GitHub Pages. Puedes verlo en vivo en la siguiente URL:
 
 https://mikehell84.github.io/revolution-tattoo/
 
-👨‍💻 Desarrollado por
+Desarrollado por
 Este sitio web fue desarrollado por XLERION STUDIOS - COLOMBIA.
 
 © 2024 Revolution Tattoo Studio. Todos los derechos reservados.
